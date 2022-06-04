@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <div th:fragment="content">
+    <div class="rounded p-3 shadow my-3">
+      <p><b>Tên:</b> <span th:text="${order.address.fullName}"></span></p>
+      <p><b>Số điện thoại:</b> <span th:text="${order.address.phoneNumber}"></span></p>
+      <p><b>Địa chỉ:</b> <span th:text="${order.address.fullAddress}"></span></p>
+    </div>
+  </div>
+</body>
+</html>

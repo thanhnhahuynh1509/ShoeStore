@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="modal-header container m-auto">
+  <h5 class="modal-title">Tiến độ đơn hàng #[[${order.id}]]</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+  </button>
+</div>
+<div class="modal-body">
+  <div class="bg-white container m-auto my-5 rounded py-3">
+    <ul>
+      <li th:each="item: ${tracks}">
+        <p><span></span> <span th:text="${#dates.format(item.createdDate, 'HH:mm dd/MM/yyyy')}"></span> <span th:text="${item.content}"></span></p>
+      </li>
+    </ul>
+  </div>
+  <!-- Overlay -->
+  <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+</div>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <div th:fragment="content">
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập tên sản phẩm...')" oninvalid="requiredInput(this, 'Vui lòng nhập tên sản phẩm...')" required type="text" class="form-control" placeholder="Nhập tên sản phẩm..." th:field="*{name}" />
+      <label th:for="name">Tên sản phẩm</label>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Thương hiệu</label>
+      <select required onchange="updateCategoriesSelectByBrand($(this))" class="form-select" th:field="*{brand}">
+        <option th:each="item : ${brands}" th:value="${item.id}" th:text="${item.name}"></option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Thể loại</label>
+      <select required class="form-select" th:field="*{category}">
+        <th:block th:if="${product.brand != null}">
+          <option th:each="item : ${product.brand.categories}" th:value="${item.id}" th:text="${item.name}"></option>
+        </th:block>
+      </select>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập chi phí sản phẩm...')" oninvalid="requiredInput(this, 'Vui lòng nhập chi phí sản phẩm...')" required type="number" min="0" class="form-control" placeholder="Nhập chi phí sản phẩm..." th:field="*{cost}" />
+      <label th:for="cost">Chi phí</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập giá sản phẩm...')" oninvalid="requiredInput(this, 'Vui lòng nhập giá sản phẩm...')" required type="number" min="0" class="form-control" placeholder="Nhập giá sản phẩm..." th:field="*{price}" />
+      <label th:for="cost">Giá</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập giảm giá sản phẩm...')" oninvalid="requiredInput(this, 'Vui lòng nhập giảm giá sản phẩm...')" required type="number" min="0" class="form-control" placeholder="Nhập giảm giá sản phẩm..." th:field="*{discountPercent}" />
+      <label th:for="cost">Giảm giá</label>
+    </div>
+
+    <div class="form-check mb-3 mt-3">
+      <input class="form-check-input" type="checkbox" th:field="*{enabled}" />
+      <label class="form-check-label" th:for="enabled1">
+        Kích hoạt
+      </label>
+    </div>
+
+    <div class="form-check mb-3 mt-3">
+      <input class="form-check-input" type="checkbox" th:field="*{inStock}" />
+      <label class="form-check-label" th:for="inStock1">
+        Còn hàng
+      </label>
+    </div>
+  </div>
+</body>
+</html>

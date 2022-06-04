@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div class="modal-header">
+  <h5 class="modal-title">Chi tiết sản phẩm</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+  </button>
+</div>
+<div class="modal-body">
+  <div class="doc-example">
+    <div class="tab-content doc-example-content" data-label="Thông tin" id="tab-tabContent">
+      <div class="nav-align-top">
+        <ul class="nav nav-pills mb-3">
+          <li class="nav-item">
+            <button type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#overview">
+              Tổng quát
+            </button>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#adresses">
+              Địa chỉ
+            </button>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#details">
+              Chi tiết
+            </button>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#tracks">Theo dõi
+            </button>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="overview">
+            <div th:replace="/order/overview :: content"></div>
+          </div>
+
+          <div class="tab-pane fade" id="adresses">
+            <div th:replace="/order/address :: content"></div>
+          </div>
+
+          <div class="tab-pane fade" id="details">
+            <div th:replace="/order/order_details :: content"></div>
+          </div>
+
+          <div class="tab-pane fade" id="tracks">
+            <div th:replace="/order/track :: content"></div>
+            <button onclick="showAddProcessModal()" class="btn btn-primary">Thêm tiến trình</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+</div>
+
+<div class="modal fade" id="modalProcessDialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thêm tiến trình</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post">
+          <input type="hidden" id="orderId" name="orderId" th:value="${order.id}"/>
+          <div class="form-floating mb-3">
+            <input required id="content" type="text" class="form-control" placeholder="Nhập nội dung tiến trình" name="content"/>
+            <label th:for="name">Nội dung tiến trình</label>
+          </div>
+          <div class="mb-3">
+            <select class="form-select" name="ordinal" id="ordinal">
+              <option th:each="item : ${T(com.dacs.entitymodules.enumType.OrderStatus).values()}"
+                      th:value="${item.ordinal()}"
+                      th:text="${item.description}">
+              </option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <a onclick="addProcess()" class="btn btn-success text-white cursor-pointer" id="btn-add">Thêm</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  function addProcess() {
+    const url = "[[@{/api/tracks}]]"
+    const orderId = document.getElementById('orderId');
+    const content = document.getElementById('content');
+    const ordinal = document.getElementById('ordinal');
+    const csrf = $("input[name='_csrf']").val();
+
+    if(content.value == null || content.value.length <= 0) {
+      alert("Vui lòng nhập nội dung");
+      return;
+    }
+
+    let param = {
+      orderId: orderId.value,
+      content: content.value,
+      ordinal: ordinal.value,
+      _csrf: csrf
+    }
+
+    $.post(url, param, function(response) {
+      $("#contain-track").append(`
+        <div class="row col-md-6 p-3 mb-3 rounded shadow">
+        <div class="col-md-3"><span>${response.formatDate}</span></div>
+        <div class="col-md-6"><span>${response.content}</span></div>
+        <div class="col-md-3 text-end">
+            <button data-id="${response.id}" class="btn btn-sm btn-danger">xóa tiến trình</button>
+        </div>
+        </div>
+      `)
+
+      $("#modalProcessDialog").modal('hide');
+      location.reload();
+    })
+
+  }
+
+  function deleteProcess(btn) {
+    const url = "[[@{/api/tracks/delete}]]";
+    const orderId = btn.attr('data-id');
+    $.get(url, {orderId: orderId}, function() {
+      btn.closest('.row').remove();
+    })
+  }
+
+</script>
+
+</body>
+</html>

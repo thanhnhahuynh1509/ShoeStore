@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div th:fragment="content">
+
+  <div class="nav-align-top">
+    <ul class="nav nav-pills mb-3">
+      <li class="nav-item">
+        <button type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#account">Tài khoản</button>
+      </li>
+      <li class="nav-item">
+        <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#order">Hóa đơn</button>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="account">
+        <form th:action="@{/settings/save}" method="post">
+          <input type="hidden" name="type" value="MAIL_TEMPLATES">
+          <div class="form-floating mb-3">
+            <input oninput="requiredInput(this, 'Vui lòng nhập tiêu đề cho mail')" name="CUSTOMER_VERIFY_SUBJECT"
+                   oninvalid="requiredInput(this, 'Vui lòng nhập tiêu đề cho mail')" th:value="${CUSTOMER_VERIFY_SUBJECT}"
+                   required type="text" class="form-control" placeholder="Nhập tiêu đề mail"/>
+            <label th:for="name">Tiêu đề</label>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label" th:for="CUSTOMER_VERIFY_CONTENT">Nội dung</label>
+            <textarea id="CUSTOMER_VERIFY_CONTENT" name="CUSTOMER_VERIFY_CONTENT">[[${CUSTOMER_VERIFY_CONTENT}]]</textarea>
+          </div>
+
+          <div class="mb-3">
+            <button class="btn btn-success"><i class='bx bx-save'></i> Lưu</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-pane fade" id="order">
+        <form th:action="@{/settings/save}" method="post">
+          <input type="hidden" name="type" value="MAIL_TEMPLATES">
+          <div class="form-floating mb-3">
+            <input oninput="requiredInput(this, 'Vui lòng nhập tiêu đề cho mail')" name="CUSTOMER_ORDER_SUBJECT"
+                   oninvalid="requiredInput(this, 'Vui lòng nhập tiêu đề cho mail')" th:value="${CUSTOMER_ORDER_SUBJECT}"
+                   required type="text" class="form-control" placeholder="Nhập tiêu đề mail"/>
+            <label th:for="name">Tiêu đề</label>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label" th:for="CUSTOMER_ORDER_CONTENT">Nội dung</label>
+            <textarea id="CUSTOMER_ORDER_CONTENT" name="CUSTOMER_ORDER_CONTENT">[[${CUSTOMER_ORDER_CONTENT}]]</textarea>
+          </div>
+
+          <div class="mb-3">
+            <button class="btn btn-success"><i class='bx bx-save'></i> Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+</body>
+</html>

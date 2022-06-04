@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/fragments/layout-fragment :: head('Trang chủ')"></head>
+
+<body style="background-color: #f5f5fa">
+
+<!-- Layout wrapper -->
+<div>
+  <div th:replace="fragments/layout-fragment :: navbar"></div>
+
+  <div class="bg-white container m-auto my-5 rounded py-3">
+    <div class="mt-3 mb-5"><h3 class="text-center">Giỏ hàng của bạn</h3></div>
+    <div id="while-cart-size-zero" th:class="${(carts == null || carts.size() == 0) ? 'd-block' : 'd-none'}">
+      <h4 class="text-center">Bạn chưa có sản phẩm nào trong giỏ hàng</h4>
+      <div class="text-center">
+        <a th:href="@{/s}" class="btn btn-primary text-white">Về trang mua hàng</a>
+      </div>
+    </div>
+    <div class="while-cart-size-gr-zero" th:if="${carts != null && carts.size() > 0}">
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Sản phẩm</th>
+          <th>Giá <span style="font-size: 11px; text-transform: lowercase">(giảm giá)</span></th>
+          <th>Số lượng</th>
+          <th>Tổng giá</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${carts}">
+          <td>
+            <a th:href="@{'/p/' + ${item.product.alias}}">
+              <img style="width: 100px" th:src="@{${item.product.mainImagePath}}"/>
+              <span th:text="${item.product.name}"></span>
+            </a>
+          </td>
+          <td>
+            <span th:text="${#numbers.formatDecimal(item.getPrice(), 0, 'COMMA', 0, 'POINT') + ' đ'}"></span>
+            <span th:if="${item.getDiscountPrice() > 0}" style="font-size: 12px; color: #fe4a4a">
+              ([[${#numbers.formatDecimal(item.getDiscountPrice(), 0, 'COMMA', 0, 'POINT')}]] đ)
+            </span>
+            <span class="price d-none" th:text="${item.getPrice()}"></span>
+          </td>
+          <td><input oninput="updateCartItem($(this))" th:data-id="${item.id}" type="number" min="1" max="5" class="form-control quantity" style="width: 70px" th:value="${item.quantity}"></td>
+          <td>
+            <span class="subTotalFormat" th:text="${#numbers.formatDecimal(item.getTotalPrice(), 0, 'COMMA', 0, 'POINT') + ' đ'}"></span>
+            <span class="subTotal d-none" th:text="${item.getTotalPrice()}"></span>
+          </td>
+          <td>
+            <a data-bs-toggle="tooltip" th:data-id="${item.id}"
+               data-bs-html="true" onclick="deleteCartItem($(this))"
+               data-bs-original-title="<i class='bx bxs-trash-alt'></i> Xóa khỏi giỏ hàng"
+               class="btn btn-sm btn-danger text-white">
+              <i class='bx bxs-trash-alt'></i>
+            </a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div th:if="${carts != null && carts.size() > 0}" class="bg-white container m-auto my-5 rounded py-3 while-cart-size-gr-zero">
+    <div>
+      <table class="table table-bordered table-dark" style="width: 500px; margin-left: auto">
+        <tr>
+          <th>Tổng số lượng: </th>
+          <td><span id="totalQuantity" th:text="${totalQuantity}"></span></td>
+        </tr>
+        <tr>
+          <th>Tổng giá thanh toán: </th>
+          <td><span id="totalPrice" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT') + ' đ'}"></span></td>
+        </tr>
+      </table>
+    </div>
+    <div class="text-end">
+      <button onclick="window.location.href = urlShop" class="btn btn-info btn-lg"><i class='bx bxs-chevron-left'></i> Tiếp tục mua sắm</button>
+      <button onclick="window.location.href = urlPlaceOrder" class="btn btn-primary btn-lg"><i class='bx bx-credit-card'></i> Thanh toán</button>
+    </div>
+  </div>
+  <!-- Overlay -->
+  <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+
+<!-- Footer -->
+<div th:replace="/fragments/layout-fragment :: footer"></div>
+<!-- / Footer -->
+
+<!-- / Layout wrapper -->
+<div th:replace="/fragments/layout-fragment :: scripts">
+
+</div>
+
+<script>
+
+  let urlShop = "[[@{/s}]]";
+  let urlPlaceOrder = "[[@{/orders/place-order}]]";
+
+  // need handle backend (Update quantity)
+  function updateCartItem(quantityInput) {
+    let url = "[[@{/api/carts/update}]]";
+    let id = quantityInput.attr("data-id");
+    let quantity = quantityInput.val();
+
+    if(quantity > 5) {
+      quantityInput.val(5)
+      quantity = 5;
+    } else if(quantity < 1) {
+      quantity = 1;
+      quantityInput.val(1);
+    }
+
+    $.get(url, {id: id, quantity: quantity}, function() {
+      let currentRow = quantityInput.closest('tr');
+      let price = parseFloat(currentRow.find('.price').text());
+      currentRow.find('.subTotal').text((price * quantity));
+      currentRow.find('.subTotalFormat').text((price * quantity).toLocaleString() + " đ");
+      updateTotal();
+    }).fail(function() {
+      alert("Lỗi hệ thống");
+    })
+  }
+
+  function deleteCartItem(btnDelete) {
+    let currentRow = btnDelete.closest('tr');
+    showModalConfirm("Cảnh báo", "Bạn có chắc chắn muốn xóa sản phẩm ra khỏi giỏ hàng?")
+
+    $("#btn-delete").on('click', function () {
+      let url = "[[@{/api/carts/delete}]]";
+      let id = btnDelete.attr("data-id");
+
+      $.get(url, {id: id}, function() {
+        currentRow.remove();
+        updateTotal();
+        calculateCartSize(false);
+      }).done(function() {
+        if($("#totalQuantity").text() === '0') {
+          $("#while-cart-size-zero").removeClass('d-none');
+          $(".while-cart-size-gr-zero").addClass('d-none');
+        }
+      }).fail(function() {
+        alert("Lỗi hệ thống");
+      })
+      $("#modalConfirm").modal('hide');
+      $("#btn-delete").off('click')
+    })
+
+  }
+
+  function updateTotal() {
+    let totalQuantitySpan = $("#totalQuantity");
+    let totalPriceSpan = $("#totalPrice");
+
+    let totalQuantity = 0;
+    let totalPrice = 0;
+
+    let quantitiesInput = document.querySelectorAll('.quantity');
+
+    quantitiesInput.forEach((quantityInput) => {
+      let quantity = parseInt(quantityInput.value);
+      let price = parseFloat(quantityInput.closest('tr').querySelector('.subTotal').textContent);
+      totalQuantity += quantity;
+      totalPrice += price;
+    })
+
+    totalQuantitySpan.text(totalQuantity);
+    totalPriceSpan.text(totalPrice.toLocaleString() + ' đ');
+  }
+
+</script>
+</body>
+</html>

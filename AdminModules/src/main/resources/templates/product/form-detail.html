@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div th:fragment="content">
+  <div class="container-detail">
+    <div th:each="item : ${product.productDetails}" class="key-value-pair">
+      <input type="hidden" th:value="${item.id}" name="detailIds"/>
+      <div class="row">
+        <div class="col-md-5">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" th:value="${item.name}" placeholder="Nhập tên chi tiết..." name="detailNames" />
+            <label th:for="cost">Tên</label>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" th:value="${item.value}" placeholder="Nhập giá trị chi tiết..." name="detailValues" />
+            <label th:for="cost">Giá trị</label>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <a onclick="removeDetail($(this))"
+             class="btn btn-secondary btn-sm text-white">
+            <i class='bx bx-x'></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="key-value-pair">
+      <input type="hidden" value="" name="detailIds"/>
+      <div class="row">
+        <div class="col-md-5">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" value="" placeholder="Nhập tên chi tiết..." name="detailNames" />
+            <label th:for="cost">Tên</label>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" value="" placeholder="Nhập giá trị chi tiết..." name="detailValues" />
+            <label th:for="cost">Giá trị</label>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <a onclick="removeDetail($(this))"
+             class="btn btn-secondary btn-sm text-white">
+            <i class='bx bx-x'></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div>
+    <a onclick="addDetail()" data-bs-toggle="tooltip"
+       data-bs-html="true" data-bs-original-title="<i class='bx bx-x'></i>  Thêm chi tiết"
+       class="btn btn-info text-white">
+      <i class='bx bx-plus'></i> Thêm chi tiết
+    </a>
+  </div>
+</div>
+</body>
+</html>

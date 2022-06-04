@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div class="modal-header">
+    <h5 class="modal-title">Chi tiết sản phẩm</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+    </button>
+</div>
+<div class="modal-body">
+    <div class="doc-example">
+        <div class="tab-content doc-example-content" data-label="Thông tin" th:object="${product}"
+             id="tab-tabContent">
+            <div class="nav-align-top">
+                <ul class="nav nav-pills mb-3">
+                    <li class="nav-item">
+                        <button type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#overview">
+                            Tổng quát
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#description">
+                            Mô tả
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#images">Hình ảnh
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#details">Chi tiết
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="overview">
+                        <div class="form-floating mb-3">
+                            <input disabled type="text" class="form-control" placeholder="Nhập tên sản phẩm..."
+                                   th:field="*{name}"/>
+                            <label th:for="name">Tên sản phẩm</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input disabled type="text" class="form-control" placeholder=""
+                                   th:field="*{alias}"/>
+                            <label th:for="name">Định danh</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Thương hiệu</label>
+                            <select disabled class="form-select">
+                                <option th:text="${product.brand.getName()}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Thể loại</label>
+                            <select disabled class="form-select">
+                                <option th:text="${product.category.name}"></option>
+                            </select>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input disabled type="text" class="form-control" placeholder=""
+                                   th:value="${#numbers.formatDecimal(product.cost, 0, 'COMMA', 0, 'POINT') + 'đ'}"/>
+                            <label th:for="cost">Chi phí</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input disabled type="text" class="form-control" placeholder=""
+                                   th:value="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + 'đ'}"/>
+                            <label th:for="cost">Giá</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input disabled type="number" class="form-control" placeholder=""
+                                   th:field="*{discountPercent}"/>
+                            <label th:for="cost">Giảm giá</label>
+                        </div>
+
+                        <div class="form-check mb-3 mt-3">
+                            <input onclick="return false" class="form-check-input" type="checkbox"
+                                   th:field="*{enabled}"/>
+                            <label class="form-check-label" th:for="enabled1">
+                                Kích hoạt
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-3 mt-3">
+                            <input onclick="return false" class="form-check-input" type="checkbox"
+                                   th:field="*{inStock}"/>
+                            <label class="form-check-label" th:for="inStock1">
+                                Còn hàng
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="description">
+                        <div class="doc-example mb-4">
+                            <div class="tab-content doc-example-content" data-label="Mô tả ngắn" th:object="${product}">
+                                <div th:utext="${product.shortDescription}"></div>
+                            </div>
+                        </div>
+
+                        <div class="doc-example mb-4">
+                            <div class="tab-content doc-example-content" data-label="Mô tả đầy đủ" th:object="${product}">
+                                <div th:utext="${product.fullDescription}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="images">
+                        <div class="row">
+                            <div class="doc-example col-md-4 mb-4">
+                                <div class="tab-content doc-example-content" data-label="Hình ảnh chính">
+                                    <div class="mb-3">
+                                        <img th:src="@{*{mainImagePath}}" style="width: 250px" id="imagePreview"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input disabled onchange="changeImageInput(this)"
+                                               th:required="${product.id == null}" class="form-control"
+                                               type="file"
+                                               id="fileUpload" name="fileUpload">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8 row" id="container-extra-images">
+                                <div th:each="item : ${product.productImages}" class="doc-example col-md-4 mb-4">
+                                    <input type="hidden" name="extraImageIds" th:value="${item.id}"/>
+                                    <input type="hidden" name="extraImageNames" th:value="${item.name}"/>
+                                    <div class="tab-content doc-example-content" data-label="Hình ảnh phụ"
+                                         style="position: relative">
+                                        <div class="mb-3">
+                                            <img th:src="@{${item.imagePath}}" style="width: 150px"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <input disabled onchange="changeExtraImage(this)" data-check-added="true"
+                                                   class="form-control"
+                                                   type="file" name="extraFileUpload">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="details" role="tabpanel">
+                        <div class="container-detail">
+                            <div th:each="item : ${product.productDetails}" class="key-value-pair">
+                                <input type="hidden" th:value="${item.id}" name="detailIds"/>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="form-floating mb-3">
+                                            <input disabled type="text" class="form-control" th:value="${item.name}"
+                                                   placeholder="Nhập tên chi tiết..." name="detailNames"/>
+                                            <label th:for="cost">Tên</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-floating mb-3">
+                                            <input disabled type="text" class="form-control" th:value="${item.value}"
+                                                   placeholder="Nhập giá trị chi tiết..." name="detailValues"/>
+                                            <label th:for="cost">Giá trị</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+</div>
+
+</body>
+</html>

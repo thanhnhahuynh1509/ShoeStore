@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="content" class="row">
+    <div class="doc-example col-md-4 mb-4">
+        <div class="tab-content doc-example-content" data-label="Hình ảnh chính">
+            <div class="mb-3">
+                <img th:src="@{*{mainImagePath}}" style="width: 250px" id="imagePreview"/>
+            </div>
+            <div class="mb-3">
+                <input onchange="changeImageInput(this)" th:required="${product.id == null}" class="form-control"
+                       type="file"
+                       id="fileUpload" name="fileUpload">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8 row" id="container-extra-images">
+
+        <div th:each="item : ${product.productImages}" class="doc-example col-md-4 mb-4">
+            <input type="hidden" name="extraImageIds" th:value="${item.id}"/>
+            <input type="hidden" name="extraImageNames" th:value="${item.name}"/>
+            <div class="tab-content doc-example-content" data-label="Hình ảnh phụ" style="position: relative">
+                <a onclick="removeExtraImage($(this))" class="cursor-pointer" style="position: absolute; top: -10px; right: -9px">
+                    <i style="font-size: 30px; color: #ff8686;" class='bx bxs-x-circle'></i>
+                </a>
+                <div class="mb-3">
+                    <img th:src="@{${item.imagePath}}" style="width: 150px"/>
+                </div>
+                <div class="mb-3">
+                    <input onchange="changeExtraImage(this)" data-check-added="true" class="form-control"
+                           type="file" name="extraFileUpload">
+                </div>
+            </div>
+        </div>
+
+        <div class="doc-example col-md-4 mb-4">
+            <input type="hidden" name="extraImageIds" value=""/>
+            <input type="hidden" name="extraImageNames" value=""/>
+            <div class="tab-content doc-example-content" data-label="Hình ảnh phụ" style="position: relative">
+                <a onclick="removeExtraImage($(this))" class="hidden cursor-pointer" style="position: absolute; top: -10px; right: -9px">
+                    <i style="font-size: 30px; color: #ff8686;" class='bx bxs-x-circle'></i>
+                </a>
+                <div class="mb-3">
+                    <img th:src="@{/common/images/default-product.png}" style="width: 150px"/>
+                </div>
+                <div class="mb-3">
+                    <input onchange="changeExtraImage(this)" data-check-added="false" class="form-control"
+                           type="file" name="extraFileUpload">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+</html>

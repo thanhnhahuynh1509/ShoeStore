@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div th:fragment="content">
+
+  <div class="mb-3">
+    <button onclick="showModalSubmit(createUrl)" class="btn btn-outline-primary w-100">Thêm địa chỉ</button>
+  </div>
+
+  <div>
+    <div class="rounded p-3 shadow my-3" th:each="item : ${addresses}">
+      <p><b>Tên:</b> <span th:text="${item.fullName}"></span></p>
+      <p><b>Số điện thoại:</b> <span th:text="${item.phoneNumber}"></span></p>
+      <p><b>Địa chỉ:</b> <span th:text="${item.fullAddress}"></span></p>
+      <p th:if="${item.isDefaultAddress}"><i style="color: #333">[Địa chỉ mặc định]</i></p>
+      <p>
+        <a th:href="@{/}" th:data-id="${item.id}" class="text-decoration-none btn-edit">Chỉnh sửa</a> |
+        <a th:href="@{/}" th:data-id="${item.id}"class="text-decoration-none btn-delete-address" th:if="${!item.isDefaultAddress}">Xóa</a>
+      </p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

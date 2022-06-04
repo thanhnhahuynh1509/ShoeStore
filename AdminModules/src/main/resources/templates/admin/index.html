@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/fragments/layout-fragment :: head('Tài khoản')"></head>
+
+<body>
+<!-- Layout wrapper -->
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <!-- Sidebar -->
+    <div th:replace="/fragments/layout-fragment :: sidebar">
+    </div>
+    <!-- / Sidebar -->
+
+    <!-- Layout container -->
+    <div class="layout-page">
+      <!-- Navbar -->
+      <nav th:replace="/fragments/layout-fragment :: navbar">
+      </nav>
+      <!-- / Navbar -->
+
+      <!-- Content wrapper -->
+      <div class="content-wrapper">
+        <!-- Begin Content -->
+        <div class="container-xxl flex-grow-1 container-p-y">
+          <!-- Begin Breadcrumb -->
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-style2 mb-0">
+              <li class="breadcrumb-item">
+                <a th:href="@{/}">Trang chủ</a>
+              </li>
+              <li class="breadcrumb-item active">Tài khoản</li>
+            </ol>
+          </nav>
+          <!-- End Breadcrumb -->
+          <!-- Begin Content Table -->
+          <div class="card my-3">
+            <div class="card-header row justify-content-between">
+              <h4 class="card-title col-md-6">Danh sách tài khoản</h4>
+              <div class="col-md-6 text-end">
+                <a th:href="@{/admins/create}" class="btn btn-success text-white"
+                   data-bs-toggle="tooltip" data-bs-html="true"
+                   data-bs-original-title="<i class='bx bx-bell bx-tada' ></i> <span>Thêm tài khoản mới</span>">
+                  <i class="bx bx-user-plus"></i> Thêm
+                </a>
+              </div>
+            </div>
+            <div class="card-body">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>ID</th>
+                  <th class="text-center">Hình ảnh</th>
+                  <th>Họ</th>
+                  <th>Tên</th>
+                  <th>Email</th>
+                  <th class="text-center">Trạng thái</th>
+                  <th>Quyền</th>
+                  <th>Chức năng</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                  <tr th:each="item : ${admins}">
+                    <td th:text="${item.id}"></td>
+                    <td class="text-center">
+                      <img style="width: 60px" th:src="@{${item.imagePath}}"/>
+                    </td>
+                    <td th:text="${item.lastName}"></td>
+                    <td th:text="${item.firstName}"></td>
+                    <td th:text="${item.email}"></td>
+                    <td class="text-center">
+                      <a onclick="changeStatus($(this))" class="cursor-pointer" th:data-id="${item.id}" th:data-status="${!item.enabled}" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="Thay đổi trạng thái">
+                        <i style="font-size: 35px" th:class="${item.enabled ? 'bx bx-checkbox-square text-success' : 'bx bx-checkbox text-secondary'}" ></i>
+                      </a>
+                    </td>
+                    <td th:text="${item.roles}"></td>
+                    <td>
+                      <a th:href="@{'/admins/update?id=' + ${item.id}}" class="btn btn-sm btn-warning text-white" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="<i class='bx bx-edit'></i> chỉnh sửa">
+                        <i class='bx bx-edit'></i>
+                      </a>
+                      <a onclick="confirmDelete($(this))" th:data-id="${item.id}" class="btn btn-sm btn-danger text-white" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="<i class='bx bx-trash'></i> Xóa">
+                        <i class='bx bx-trash' ></i>
+                      </a>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+          <!-- End Content Table -->
+        </div>
+        <!-- End Content -->
+
+        <!-- Footer -->
+        <footer th:replace="/fragments/layout-fragment :: footer"></footer>
+        <!-- / Footer -->
+
+        <div class="content-backdrop fade"></div>
+      </div>
+      <!-- Content wrapper -->
+    </div>
+    <!-- / Layout page -->
+  </div>
+
+  <!-- Overlay -->
+  <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+
+<!-- / Layout wrapper -->
+<div th:replace="/fragments/layout-fragment :: scripts"></div>
+
+<script>
+  let urlChangeStatus = "[[@{/api/admins/changeStatus}]]";
+  let urlDelete = "[[@{/api/admins/delete}]]";
+
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div class="modal-header">
+  <h5 class="modal-title">Chi tiết quản trị viên</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+  </button>
+</div>
+<div class="modal-body">
+  <div class="doc-example">
+    <div class="tab-content doc-example-content" data-label="Thông tin" th:object="${admin}"
+         id="tab-tabContent">
+      <div class="nav-align-top">
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="overview">
+            <div class="form-floating mb-3">
+              <input disabled type="text" class="form-control" placeholder="Nhập tên sản phẩm..."
+                     th:value="*{firstName + ' ' + lastName}"/>
+              <label th:for="name">Họ & tên</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input disabled type="text" class="form-control" placeholder=""
+                     th:value="*{email}"/>
+              <label th:for="name">Email</label>
+            </div>
+            <div class="form-floating mb-3">
+              <p>Hình ảnh</p>
+              <img th:src="@{${admin.imagePath}}" style="width: 200px"/>
+            </div>
+            <div class="form-floating mb-3">
+              <input disabled type="text" class="form-control" placeholder=""
+                     th:value="*{roles}"/>
+              <label th:for="name">Quyền</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+</div>
+
+</body>
+</html>

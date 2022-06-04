@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <head th:replace="/fragments/layout-fragment :: head('Xác thực')"></head>
+  <link rel="stylesheet" th:href="@{/assets/vendor/css/pages/page-auth.css}" />
+</head>
+
+<body style="background-color: #f5f5fa">
+
+<!-- Content -->
+<div class="container-xxl">
+  <div class="authentication-wrapper authentication-basic container-p-y">
+    <div class="authentication-inner">
+      <!-- Register -->
+      <div class="card">
+        <div class="card-body">
+          <!-- Logo -->
+          <div class="app-brand justify-content-center">
+            <a th:href="@{/}" class="app-brand-link gap-2">
+                              <span class="app-brand-logo demo">
+                                <img th:src="@{/common/images/icon.png}" style="width: 50px"/>
+                              </span>
+              <span class="app-brand-text demo text-body fw-bolder">Shoes Store</span>
+            </a>
+          </div>
+          <!-- /Logo -->
+          <h4 class="mb-2"></h4>
+          <p class="mb-2 text-center text-danger" th:if="${param.error != null}">Email hoặc mật khẩu không đúng</p>
+          <p class="mb-4 text-center">Tạo tài khoản và bắt đầu trải nghiệm</p>
+          <a class="btn btn-info w-100 text-white my-2"><i class='bx bxl-facebook'></i> Tiếp tục với Facebook</a>
+          <a class="btn btn-danger w-100 text-white my-2"><i class='bx bxl-google' ></i> Tiếp tục với Google</a>
+          <form id="formAuthentication" class="mb-3" th:action="@{/register}" method="POST" onsubmit="return checkEmailUnique(this)">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      name="email"
+                      placeholder="Nhập email của bạn"
+                      autofocus
+                      required
+              />
+            </div>
+            <div class="mb-3 form-password-toggle">
+              <div class="d-flex justify-content-between">
+                <label class="form-label" for="password">Mật khẩu</label>
+              </div>
+              <div class="input-group input-group-merge">
+                <input
+                        oninput="checkPasswordMatch(document.getElementById('confirm-password'))"
+                        type="password"
+                        id="password"
+                        class="form-control"
+                        name="password"
+                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                        aria-describedby="password"
+                />
+                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+              </div>
+            </div>
+            <div class="mb-3 form-password-toggle">
+              <div class="d-flex justify-content-between">
+                <label class="form-label" for="password">Nhập lại mật khẩu</label>
+              </div>
+              <div class="input-group input-group-merge">
+                <input
+                        oninput="checkPasswordMatch(this)"
+                        type="password"
+                        id="confirm-password"
+                        class="form-control"
+                        placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                        aria-describedby="password"
+                />
+                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <button class="btn btn-primary d-grid w-100 my-2" type="submit">Đăng ký</button>
+            </div>
+          </form>
+
+          <p class="text-center">
+            <span>Bạn đã có tài khoản?</span>
+            <a th:href="@{/login}">
+              <span>Đăng nhập</span>
+            </a>
+          </p>
+        </div>
+      </div>
+      <!-- /Register -->
+    </div>
+  </div>
+</div>
+
+<!-- / Content -->
+<!-- Overlay -->
+<div class="layout-overlay layout-menu-toggle"></div>
+
+<!-- Footer -->
+<div th:replace="/fragments/layout-fragment :: footer"></div>
+<!-- / Footer -->
+
+<!-- / Layout wrapper -->
+<div th:replace="/fragments/layout-fragment :: scripts">
+
+</div>
+
+<script>
+
+  function checkPasswordMatch(confirmPassword) {
+    const password = $("#password").val();
+    if(confirmPassword.value !== password) {
+      confirmPassword.setCustomValidity("Mật khẩu không trùng khớp");
+    } else {
+      confirmPassword.setCustomValidity("");
+      confirmPassword.reportValidity();
+    }
+  }
+
+  function checkEmailUnique(form) {
+    const url = "[[@{/api/customers/check-email-unique}]]";
+    let email = $("#email").val();
+    let csrf = $("input[name='_csrf']").val();
+
+    let param = {
+      email: email,
+      _csrf: csrf
+    }
+    $.post(url, param, function(response) {
+      if(response === "OK") {
+        form.submit();
+      } else {
+        showModalDialog("Cảnh báo", "Email đã được tài khoản khác sử dụng! Vui lòng chọn tài khoản Email khác.");
+      }
+    }).fail(function() {
+      showModalDialog("Lỗi", "Lỗi thống đang bị trục trặc hoặc bảo trì. Vui lòng thử lại sau ít phút!");
+    })
+
+    return false;
+  }
+
+
+
+</script>
+</body>
+</html>

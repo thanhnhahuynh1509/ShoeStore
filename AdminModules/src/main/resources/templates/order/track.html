@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:fragment="content" id="contain-track">
+    <div class="row col-md-6 p-3 mb-3 rounded shadow" th:each="item : ${tracks}">
+        <div class="col-md-3"><span th:text="${#dates.format(item.createdDate, 'HH:mm dd/MM/yyyy')}"></span></div>
+        <div class="col-md-6"><span th:text="${item.content}"></span></div>
+        <div class="col-md-3 text-end">
+            <button onclick="deleteProcess($(this))" th:data-id="${item.id}" class="btn btn-sm btn-danger">xóa tiến trình</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

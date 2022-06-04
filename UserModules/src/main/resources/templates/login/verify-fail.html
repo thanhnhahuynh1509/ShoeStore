@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/fragments/layout-fragment :: head('Trang chủ')"></head>
+
+<body style="background-color: #f5f5fa">
+<!-- Layout wrapper -->
+<div>
+  <div th:replace="fragments/layout-fragment :: navbar"></div>
+  <div class="d-flex justify-content-center my-5">
+    <div class="container bg-white p-3 text-center">
+      <p>Tài khoản đã được xác thực hoặc thông tin xác thực không hợp lệ. Vui lòng kiểm tra lại sau!</p>
+      <a class="btn btn-primary" th:href="@{/}">Trở về</a>
+    </div>
+  </div>
+
+
+  <!-- Overlay -->
+  <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+
+<!-- Footer -->
+<div th:replace="/fragments/layout-fragment :: footer"></div>
+<!-- / Footer -->
+
+<!-- / Layout wrapper -->
+<div th:replace="/fragments/layout-fragment :: scripts">
+
+</div>
+
+<script>
+
+</script>
+</body>
+</html>

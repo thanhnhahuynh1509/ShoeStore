@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div class="modal-header">
+  <h5 class="modal-title">Chi tiết người dùng</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+  </button>
+</div>
+<div class="modal-body">
+  <div class="doc-example">
+    <div class="tab-content doc-example-content" data-label="Thông tin" th:object="${customer}"
+         id="tab-tabContent">
+      <div class="nav-align-top">
+        <ul class="nav nav-pills mb-3">
+          <li class="nav-item">
+            <button type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#overview">
+              Tổng quát
+            </button>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#address">
+              Địa chỉ
+            </button>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="overview">
+            <div class="form-floating mb-3">
+              <input disabled type="text" class="form-control" placeholder="Nhập tên sản phẩm..."
+                     th:value="*{fullName}"/>
+              <label th:for="name">Họ & tên</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input disabled type="text" class="form-control" placeholder=""
+                     th:value="*{email}"/>
+              <label th:for="name">Email</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input disabled type="text" class="form-control" placeholder=""
+                     th:value="${#dates.format(customer.createdDate, 'dd/MM/yyyy')}"/>
+              <label th:for="name">Ngày đăng ký</label>
+            </div>
+            <div class="form-floating mb-3">
+              <p>Hình ảnh</p>
+              <img th:src="@{${customer.imagePath}}" style="width: 200px"/>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="address">
+            <div th:if="${customer.addresses == null || customer.addresses.size() <= 0}">
+              <h5>Người dùng chưa nhập địa chỉ</h5>
+            </div>
+            <div class="rounded p-3 shadow my-3" th:each="item : ${customer.addresses}">
+              <p><b>Tên:</b> <span th:text="${item.fullName}"></span></p>
+              <p><b>Số điện thoại:</b> <span th:text="${item.phoneNumber}"></span></p>
+              <p><b>Địa chỉ:</b> <span th:text="${item.fullAddress}"></span></p>
+              <p th:if="${item.isDefaultAddress}"><i style="color: #333">[Địa chỉ mặc định]</i></p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+</div>
+
+</body>
+</html>

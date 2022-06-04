@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div th:fragment="content">
+
+  <form th:action="@{/settings/save}" method="post">
+    <input type="hidden" name="type" value="PAYPAL">
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập đường dẫn PayPal Base API')" name="PAYPAL_URL_API"
+             oninvalid="requiredInput(this, 'Vui lòng nhập đường dẫn PayPal Base API')" th:value="${PAYPAL_URL_API}"
+             required type="mail" class="form-control" placeholder="Nhập đường dẫn PayPal Base API..."/>
+      <label th:for="name">PayPal API Base URL</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập client id')" name="PAYPAL_CLIENT_ID"
+             oninvalid="requiredInput(this, 'Vui lòng nhập client id')" th:value="${PAYPAL_CLIENT_ID}"
+             required type="text" class="form-control" placeholder="Nhập client id..."/>
+      <label th:for="name">PayPal Client ID</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập client secret')" name="PAYPAL_CLIENT_SECRET"
+             oninvalid="requiredInput(this, 'Vui lòng nhập client secret')" th:value="${PAYPAL_CLIENT_SECRET}"
+             required type="text" class="form-control" placeholder="Nhập client secret..."/>
+      <label th:for="name">PayPal Client Secret</label>
+    </div>
+    <div class="mb-3">
+      <button class="btn btn-success"><i class='bx bx-save'></i> Lưu</button>
+    </div>
+  </form>
+
+</div>
+</body>
+</html>

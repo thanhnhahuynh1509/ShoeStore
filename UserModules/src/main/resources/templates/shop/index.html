@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/fragments/layout-fragment :: head('Trang chủ')"></head>
+
+<body style="background-color: #f5f5fa">
+<!-- Layout wrapper -->
+<div>
+  <div th:replace="fragments/layout-fragment :: navbar"></div>
+
+  <div class="row bg-white container m-auto my-5 rounded">
+    <div class="col-md-3">
+      <div class="mt-5">
+        <p style="font-weight: 600">DANH MỤC SẢN PHẨM</p>
+        <ul style="list-style: none" class="my-3 p-0">
+          <li th:each="item : ${categories}" class="my-1">
+            <a style="color: #333" th:href="@{'/s?c=' + ${item.alias} + '&k=' + ${keyword}}">
+              [[${item.name}]]
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="mt-5">
+        <p style="font-weight: 600">Giá</p>
+        <form th:action="@{'/s/'}" method="get">
+          <input type="hidden" name="c" th:value="${categoryAlias}">
+          <input type="hidden" name="k" th:value="${keyword}">
+          <div>
+            <input type="number" name="price" th:value="${minPrice}" required min="0" max="100000000" class="form-control d-inline-block" style="width: 150px">
+            -
+            <input type="number" name="price" th:value="${maxPrice}" required min="0" max="100000000" class="form-control d-inline-block" style="width: 150px">
+          </div>
+          <div class="my-2">
+            <button type="submit" class="btn btn-outline-primary">Áp dụng</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+    <div class="col-md-9 d-flex justify-content-center my-5">
+      <div class="container bg-white row p-3" th:if="${products != null && products.size() > 0}">
+        <div class="card card-hover col-md-3" style="border: none !important;" th:data-alias="${item.alias}" onclick="redirectProduct($(this))" th:each="item : ${products}">
+          <img th:src="@{${item.mainImagePath}}" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title text-ellipse" th:text="${item.name}"></h5>
+            <p class="card-text">
+              [[${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}]] đ
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="text-start" style="width: 100%" th:if="${products == null || products.size() == 0}">
+        <h4>Không tìm thấy sản phẩm cần tìm</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+
+<!-- Footer -->
+<div th:replace="/fragments/layout-fragment :: footer"></div>
+<!-- / Footer -->
+
+<!-- / Layout wrapper -->
+<div th:replace="/fragments/layout-fragment :: scripts">
+
+</div>
+
+<script>
+
+</script>
+</body>
+</html>

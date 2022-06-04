@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<form th:action="@{/account/create-address}" method="post" th:object="${address}">
+  <input type="hidden" th:field="*{id}">
+  <div class="modal-header">
+    <h5 class="modal-title">Nhập thông tin địa chỉ</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập tên người dùng...')"
+             oninvalid="requiredInput(this, 'Vui lòng nhập tên người dùng...')" required type="text"
+             class="form-control" placeholder="Nhập tên người dùng..." th:field="*{fullName}"/>
+      <label th:for="name">Họ và tên</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập số điện thoại...')"
+             oninvalid="requiredInput(this, 'Vui lòng nhập số điện thoại...')" required type="text"
+             min="8"
+             max="14"
+             class="form-control" placeholder="Nhập nhập số điện thoại..." th:field="*{phoneNumber}"/>
+      <label th:for="name">Số điện thoại</label>
+    </div>
+    <div class="mb-3 row">
+      <label th:for="city" class="col-sm-4 col-form-label">Tỉnh/Thành phố:</label>
+      <div class="col-sm-8">
+        <select required onchange="changeDistrict($(this))" class="form-control" th:field="*{city}" >
+          <option th:each="item : ${cities}" th:value="${item.id}" th:text="${item.name}"></option>
+        </select>
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label th:for="district" class="col-sm-4 col-form-label">Quận huyện:</label>
+      <div class="col-sm-8">
+        <select required onchange="changeWard($(this))" th:field="*{district}" class="form-control">
+          <option th:each="item : ${districts}" th:value="${item.id}" th:text="${item.name}"></option>
+        </select>
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label th:for="ward" class="col-sm-4 col-form-label">Phường xã:</label>
+      <div class="col-sm-8">
+        <select required th:field="*{ward}" class="form-control">
+          <option th:each="item : ${wards}" th:value="${item.id}" th:text="${item.name}"></option>
+        </select>
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label th:for="ward" class="col-sm-4 col-form-label">Địa chỉ:</label>
+      <div class="col-sm-8">
+        <textarea th:field="*{details}" class="form-control" rows="4"></textarea>
+      </div>
+    </div>
+    <div th:if="*{!defaultAddress}" class="mb-3 row">
+      <label th:for="defaultAddress1" class="col-sm-4 col-form-label">Địa chỉ mặc định:</label>
+      <div class="col-sm-8">
+        <input type="checkbox" class="form-check-input" th:field="*{defaultAddress}">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+    <button type="submit" class="btn btn-success">Lưu</button>
+  </div>
+</form>
+
+<script>
+  $(document).ready(function() {
+    if(!$("#id").val())
+      changeDistrict($("#city"));
+  })
+</script>
+</html>

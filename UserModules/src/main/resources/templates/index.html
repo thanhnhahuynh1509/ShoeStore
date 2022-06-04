@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/fragments/layout-fragment :: head('Trang chủ')"></head>
+
+<body style="background-color: #f5f5fa">
+<!-- Layout wrapper -->
+<div>
+    <div th:replace="fragments/layout-fragment :: navbar"></div>
+    <div class="bg-white container-categories">
+        <div class="container py-3">
+            <ul class="d-flex justify-content-evenly m-0" style="list-style: none">
+                <li th:each="item : ${categories}">
+                    <a th:href="@{'/s?c=' + ${item.alias}}" class="d-flex flex-column">
+                        <span th:text="${item.name}"></span>
+                        <div class="text-center">
+                            <img th:src="@{${item.imagePath}}" style="width: 50px"/>
+                        </div>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center my-5">
+        <div class="container bg-white row p-3">
+            <div class="card card-hover col-md-3" style="border: none !important;" th:data-alias="${item.alias}" onclick="redirectProduct($(this))" th:each="item : ${newProducts}">
+                <img th:src="@{${item.mainImagePath}}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${item.name}"></h5>
+                    <p class="card-text">
+                        [[${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}]] đ
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+
+<!-- Footer -->
+<div th:replace="/fragments/layout-fragment :: footer"></div>
+<!-- / Footer -->
+
+<!-- / Layout wrapper -->
+<div th:replace="/fragments/layout-fragment :: scripts">
+
+</div>
+
+<script>
+
+</script>
+</body>
+</html>

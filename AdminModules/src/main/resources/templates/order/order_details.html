@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="content">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Giá <span style="font-size: 11px; text-transform: lowercase">(giảm giá)</span></th>
+            <th>Số lượng</th>
+            <th>Tổng giá</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${order.orderDetails}">
+            <td>
+                <a>
+                    <img style="width: 100px" th:src="@{${item.product.mainImagePath}}"/>
+                    <span th:text="${item.product.name}"></span>
+                </a>
+            </td>
+            <td>
+                <span th:text="${#numbers.formatDecimal(item.getPrice(), 0, 'COMMA', 0, 'POINT') + ' đ'}"></span>
+                <span th:if="${item.getDiscountPrice() > 0}" style="font-size: 12px; color: #fe4a4a">
+              ([[${#numbers.formatDecimal(item.getDiscountPrice(), 0, 'COMMA', 0, 'POINT')}]] đ)
+            </span>
+                <span class="price d-none" th:text="${item.getPrice()}"></span>
+            </td>
+            <td><input readonly th:data-id="${item.id}" type="number" min="1" max="5" class="form-control quantity" style="width: 70px" th:value="${item.quantity}"></td>
+            <td>
+                <span class="subTotalFormat" th:text="${#numbers.formatDecimal(item.getTotalPrice(), 0, 'COMMA', 0, 'POINT') + ' đ'}"></span>
+                <span class="subTotal d-none" th:text="${item.getTotalPrice()}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

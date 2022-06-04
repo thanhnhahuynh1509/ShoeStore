@@ -1,0 +1,24 @@
+.hidden {
+    display: none;
+}
+
+.card-hover {
+    cursor: pointer;
+    transition: .25s;
+}
+
+.card-hover:hover {
+    box-shadow: 0px 0px 5px #ccc;
+    transform: translateY(-10px);
+}
+
+.text-ellipse {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.h-2 {
+    height: 200px;
+}

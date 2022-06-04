@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/fragments/layout-fragment :: head('Trang chủ')"></head>
+
+<body style="background-color: #f5f5fa">
+<!-- Layout wrapper -->
+<div>
+    <div th:replace="fragments/layout-fragment :: navbar"></div>
+
+    <div class="bg-white container m-auto my-5 rounded py-3 ">
+        <div class="p-4 text-end">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-danger">Thoát tài khoản</button>
+            </form>
+        </div>
+        <div class="nav-align-left">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#info" role="tab">Thông tin tài khoản</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#address" role="tab">Sổ địa chỉ</a>
+                </li>
+                <li class="nav-item" th:if="${customer.type == 'DEFAULT'}">
+                    <a class="nav-link" data-bs-toggle="tab" href="#password" role="tab">Mật khẩu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#order" role="tab">Hóa đơn</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="info">
+                    <div th:replace="/customer/info :: content"></div>
+                </div>
+                <div class="tab-pane fade" id="address">
+                    <div th:replace="/customer/address :: content"></div>
+                </div>
+                <div class="tab-pane fade" id="password">
+                    <div th:replace="/customer/password :: content"></div>
+                </div>
+                <div class="tab-pane fade" id="order">
+                    <div th:replace="/customer/order :: content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+
+<!-- Footer -->
+<div th:replace="/fragments/layout-fragment :: footer"></div>
+<!-- / Footer -->
+
+<!-- / Layout wrapper -->
+<div th:replace="/fragments/layout-fragment :: scripts">
+</div>
+
+<div class="modal fade" id="modalCanceledOrder">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{/account/cancel}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Hủy đơn hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="orderId" id="orderId"/>
+                    <label for="reason">Lý do hủy</label>
+                    <textarea id="reason" class="form-control" name="reason" rows="5"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-danger">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let createUrl = "[[@{/account/create-address}]]";
+
+    $(document).ready(function () {
+        customizeTab();
+        $(".btn-edit").on('click', function (e) {
+            e.preventDefault()
+            showModalSubmit("[[@{/account/update-address?id=}]]" + $(this).attr('data-id'))
+        })
+
+        $(".btn-delete-address").on('click', function (e) {
+            e.preventDefault()
+            let id = $(this).attr("data-id");
+            let btnDelete = $("#btn-delete");
+            showModalConfirm("Xóa địa chỉ", 'Bạn có chắc chắn muốn xóa địa chỉ này?');
+            btnDelete.on('click', function () {
+                document.location.href = '[[@{/account/delete-address?id=}]]' + id;
+            })
+        })
+    })
+
+    function changeImage(input) {
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            $("#imagePreview").attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(file);
+    }
+
+    function changeDistrict(citySelect) {
+        let districtSelect = $("#district");
+        let url = "[[@{/api/addresses/}]]" + citySelect.val() + "/districts";
+        $.get(url, function (response) {
+            districtSelect.empty();
+            $.each(response, function (index, data) {
+                $("<option>").val(data.id).text(data.name).appendTo(districtSelect);
+            })
+            changeWard($("#district"));
+        })
+    }
+
+    function changeWard(districtSelect) {
+        let wardSelect = $("#ward");
+
+        let url = "[[@{/api/addresses/}]]" + districtSelect.val() + "/wards";
+        $.get(url, function (response) {
+            wardSelect.empty();
+            $.each(response, function (index, data) {
+                $("<option>").val(data.id).text(data.name).appendTo(wardSelect);
+            })
+        })
+    }
+
+    function customizeTab() {
+        let url = document.location.toString();
+        if (url.match('#')) {
+            $('.nav-tabs a[href="#' + url.split("#")[1] + '"]').tab('show');
+        }
+
+        $('.nav-tabs a').on('shown.bs.tab', function (e) {
+            window.location.hash = e.target.hash;
+        })
+    }
+
+    function checkPasswordMatch(confirmPassword) {
+        const password = $("#newPassword").val();
+        if (confirmPassword.value !== password) {
+            confirmPassword.setCustomValidity("Mật khẩu không trùng khớp");
+        } else {
+            confirmPassword.setCustomValidity("");
+            confirmPassword.reportValidity();
+        }
+    }
+
+    function checkPasswordCorrect(form) {
+        let url = '[[@{/api/customers/check-password-correct}]]'
+        let password = $("#oldPassword").val();
+        let email = $("#email").val();
+        let csrf = $("input[name='_csrf']").val();
+        let param = {
+            password: password,
+            email: email,
+            _csrf: csrf
+        }
+
+        $.post(url, param, function (response) {
+            if (response === "OK") {
+                form.submit();
+            } else if (response === "NOT OK") {
+                showModalDialog("Thông báo", "Mật khẩu cũ không đúng");
+            }
+        })
+
+        return false;
+    }
+
+    function showOrderDetails(btn) {
+        let url = "[[@{/account/order-details?id=}]]" + btn.attr('data-id');
+        $("#modalDialogFullscreen").modal('show').find('.modal-content').load(url);
+    }
+
+    function showOrderTrack(btn) {
+        let url = "[[@{/account/tracks?orderId=}]]" + btn.attr('data-id');
+        $("#modalDialog").modal('show').find('.modal-content').load(url);
+    }
+
+    function showOrderCancel(btn) {
+        $("#modalCanceledOrder #orderId").val(btn.attr('data-id'));
+        $("#modalCanceledOrder").modal('show');
+    }
+
+</script>
+</body>
+</html>

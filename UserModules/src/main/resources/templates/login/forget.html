@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head th:replace="/fragments/layout-fragment :: head('Xác thực')"></head>
+    <link rel="stylesheet" th:href="@{/assets/vendor/css/pages/page-auth.css}" />
+</head>
+
+<body style="background-color: #f5f5fa">
+
+<!-- Content -->
+<div class="container-xxl">
+    <div class="authentication-wrapper authentication-basic container-p-y">
+        <div class="authentication-inner">
+            <!-- Register -->
+            <div class="card">
+                <div class="card-body">
+                    <!-- Logo -->
+                    <div class="app-brand justify-content-center">
+                        <a th:href="@{/}" class="app-brand-link gap-2">
+                              <span class="app-brand-logo demo">
+                                <img th:src="@{/common/images/icon.png}" style="width: 50px"/>
+                              </span>
+                            <span class="app-brand-text demo text-body fw-bolder">Shoes Store</span>
+                        </a>
+                    </div>
+                    <!-- /Logo -->
+                    <h4 class="mb-2"></h4>
+                    <p class="mb-2 text-center text-danger" th:if="${message != null}" th:text="${message}"></p>
+                    <p class="mb-4 text-center">Nhập email của bạn tại đây</p>
+                    <form id="formAuthentication" class="mb-3" th:action="@{/forget-password}" method="POST">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    name="email"
+                                    placeholder="Nhập email của bạn"
+                                    autofocus
+                                    required
+                            />
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-primary d-grid w-100 my-2" type="submit">Gửi</button>
+                        </div>
+                    </form>
+
+                    <p class="text-center">
+                        <span>Bạn đã có tài khoản?</span>
+                        <a th:href="@{/login}">
+                            <span>Đăng nhập</span>
+                        </a>
+                    </p>
+                </div>
+            </div>
+            <!-- /Register -->
+        </div>
+    </div>
+</div>
+
+<!-- / Content -->
+<!-- Overlay -->
+<div class="layout-overlay layout-menu-toggle"></div>
+
+<!-- Footer -->
+<div th:replace="/fragments/layout-fragment :: footer"></div>
+<!-- / Footer -->
+
+<!-- / Layout wrapper -->
+<div th:replace="/fragments/layout-fragment :: scripts">
+
+</div>
+
+<script>
+
+</script>
+</body>
+</html>

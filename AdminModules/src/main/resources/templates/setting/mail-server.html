@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div th:fragment="content">
+
+  <form th:action="@{/settings/save}" method="post">
+    <input type="hidden" name="type" value="MAIL_SERVER">
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập tên đăng nhập cho mail')" name="MAIL_USERNAME"
+             oninvalid="requiredInput(this, 'Vui lòng nhập tên đăng nhập cho mail')" th:value="${MAIL_USERNAME}"
+             required type="mail" class="form-control" placeholder="Nhập tên đăng nhập..."/>
+      <label th:for="name">Tên đăng nhập</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập tên đăng nhập cho mail')" name="MAIL_PASSWORD"
+             oninvalid="requiredInput(this, 'Vui lòng nhập tên đăng nhập cho mail')" th:value="${MAIL_PASSWORD}"
+             required type="text" class="form-control" placeholder="Nhập tên đăng nhập..."/>
+      <label th:for="name">Mật khẩu</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập tên đăng nhập cho mail')" name="MAIL_HOST"
+             oninvalid="requiredInput(this, 'Vui lòng nhập tên đăng nhập cho mail')" th:value="${MAIL_HOST}"
+             required type="text" class="form-control" placeholder="Nhập tên đăng nhập..."/>
+      <label th:for="name">Host</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập tên đăng nhập cho mail')" name="MAIL_PORT"
+             oninvalid="requiredInput(this, 'Vui lòng nhập tên đăng nhập cho mail')" th:value="${MAIL_PORT}"
+             required type="number" class="form-control" placeholder="Nhập tên đăng nhập..."/>
+      <label th:for="name">Số cổng (Port number)</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập địa chỉ cho mail')" name="MAIL_FROM"
+             oninvalid="requiredInput(this, 'Vui lòng nhập tên đăng nhập cho mail')" th:value="${MAIL_FROM}"
+             required type="email" class="form-control" placeholder="Nhập tên đăng nhập..."/>
+      <label th:for="name">Địa chỉ mail gửi</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input oninput="requiredInput(this, 'Vui lòng nhập tên khi gửi')" name="MAIL_SENDER_NAME"
+             oninvalid="requiredInput(this, 'Vui lòng nhập tên đăng nhập cho mail')" th:value="${MAIL_SENDER_NAME}"
+             required type="text" class="form-control" placeholder="Nhập tên đăng nhập..."/>
+      <label th:for="name">Tên mail gửi</label>
+    </div>
+    <div class="mb-3 row">
+      <label for="SMTP_AUTH" class="col-sm-4 col-form-label">Server Authentication Required:</label>
+      <div class="col-sm-8">
+        <select id="SMTP_AUTH" name="SMTP_AUTH" class="form-control">
+          <option value="true" th:selected="(${SMTP_AUTH} == 'true')">True</option>
+          <option value="false" th:selected="(${SMTP_AUTH} == 'false')">False</option>
+        </select>
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label for="SMTP_SECURED" class="col-sm-4 col-form-label">Yêu cầu TLS:</label>
+      <div class="col-sm-8">
+        <select id="SMTP_SECURED" name="SMTP_SECURED" class="form-control">
+          <option value="true" th:selected="(${SMTP_SECURED} == 'true')">True</option>
+          <option value="false" th:selected="(${SMTP_SECURED} == 'false')">False</option>
+        </select>
+      </div>
+    </div>
+    <div class="mb-3">
+      <button class="btn btn-success"><i class='bx bx-save'></i> Lưu</button>
+    </div>
+  </form>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="modal-header container m-auto">
+      <h5 class="modal-title">Chi tiết hóa đơn</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+      </button>
+</div>
+<div class="modal-body">
+    <div class="bg-white container m-auto my-5 rounded py-3">
+        <div class="my-3">
+          <h5 class="my-3">Tiến độ đơn hàng</h5>
+          <div th:if="${track != null}" class="row col-md-6 p-3 mb-3 rounded shadow">
+            <div class="col-md-3"><span th:text="${#dates.format(track.createdDate, 'HH:mm dd/MM/yyyy')}"></span></div>
+            <div class="col-md-6"><span th:text="${track.content}"></span></div>
+            <div class="col-md-3 text-end">
+              <button onclick="showOrderTrack($(this))" th:data-id="${order.id}" class="btn btn-sm btn-primary">Xem tất cả tiến độ</button>
+            </div>
+          </div>
+          <div th:if="${track == null}" class="my-3">
+            <h6>Đơn hàng chưa được cập nhật tiến độ</h6>
+          </div>
+        </div>
+        <div class="while-cart-size-gr-zero">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Giá <span style="font-size: 11px; text-transform: lowercase">(giảm giá)</span></th>
+                    <th>Số lượng</th>
+                    <th>Tổng giá</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${order.orderDetails}">
+                    <td>
+                        <a th:href="@{'/p/' + ${item.product.alias}}">
+                            <img style="width: 100px" th:src="@{${item.product.mainImagePath}}"/>
+                            <span th:text="${item.product.name}"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <span th:text="${#numbers.formatDecimal(item.getPrice(), 0, 'COMMA', 0, 'POINT') + ' đ'}"></span>
+                        <span th:if="${item.getDiscountPrice() > 0}" style="font-size: 12px; color: #fe4a4a">
+              ([[${#numbers.formatDecimal(item.getDiscountPrice(), 0, 'COMMA', 0, 'POINT')}]] đ)
+            </span>
+                        <span class="price d-none" th:text="${item.getPrice()}"></span>
+                    </td>
+                    <td><input readonly oninput="updateCartItem($(this))" th:data-id="${item.id}" type="number" min="1" max="5"
+                               class="form-control quantity" style="width: 70px" th:value="${item.quantity}"></td>
+                    <td>
+                        <span class="subTotalFormat"
+                              th:text="${#numbers.formatDecimal(item.getTotalPrice(), 0, 'COMMA', 0, 'POINT') + ' đ'}"></span>
+                        <span class="subTotal d-none" th:text="${item.getTotalPrice()}"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+</div>
+</html>

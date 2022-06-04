@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/fragments/layout-fragment :: head('Trang chủ')"></head>
+
+<body style="background-color: #f5f5fa">
+
+<!-- Layout wrapper -->
+<div>
+  <div th:replace="fragments/layout-fragment :: navbar"></div>
+
+  <div class="bg-white container m-auto my-5 rounded py-3">
+    <div class="mt-3 mb-5"><h3 class="text-center">Thanh Toán</h3></div>
+    <div class="card mb-3">
+      <div class="card-header">
+        <h5>Thông tin giao hàng (Địa chỉ mặc định)</h5>
+      </div>
+      <div class="card-body">
+        <div th:if="${carts != null && carts.size() > 0 && address != null}" class="rounded p-3 shadow my-3">
+          <p><b>Tên:</b> <span th:text="${address.fullName}"></span></p>
+          <p><b>Số điện thoại:</b> <span th:text="${address.phoneNumber}"></span></p>
+          <p><b>Địa chỉ:</b> <span>[[${address.details}]], [[${address.ward.name}]], [[${address.district.name}]], [[${address.city.name}]]</span></p>
+          <p><a class="text-decoration-none" th:href="@{/account#address}">[Thay đổi]</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h5>Chi tiết đơn hàng</h5></div>
+      <div class="card-body">
+        <div class="while-cart-size-gr-zero" th:if="${carts != null && carts.size() > 0}">
+          <table class="table">
+            <thead>
+            <tr>
+              <th>Sản phẩm</th>
+              <th>Giá <span style="font-size: 11px; text-transform: lowercase">(giảm giá)</span></th>
+              <th>Số lượng</th>
+              <th>Tổng giá</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${carts}">
+              <td>
+                <a th:href="@{'/p/' + ${item.product.alias}}">
+                  <img style="width: 100px" th:src="@{${item.product.mainImagePath}}"/>
+                  <span th:text="${item.product.name}"></span>
+                </a>
+              </td>
+              <td>
+                <span th:text="${#numbers.formatDecimal(item.getPrice(), 0, 'COMMA', 0, 'POINT') + ' đ'}"></span>
+                <span th:if="${item.getDiscountPrice() > 0}" style="font-size: 12px; color: #fe4a4a">
+              ([[${#numbers.formatDecimal(item.getDiscountPrice(), 0, 'COMMA', 0, 'POINT')}]] đ)
+            </span>
+                <span class="price d-none" th:text="${item.getPrice()}"></span>
+              </td>
+              <td><input readonly th:data-id="${item.id}" type="number" min="1" max="5" class="form-control quantity" style="width: 70px" th:value="${item.quantity}"></td>
+              <td>
+                <span class="subTotalFormat" th:text="${#numbers.formatDecimal(item.getTotalPrice(), 0, 'COMMA', 0, 'POINT') + ' đ'}"></span>
+                <span class="subTotal d-none" th:text="${item.getTotalPrice()}"></span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div th:if="${carts != null && carts.size() > 0 && address == null}">
+      <h4 class="text-center">Vui lòng thêm địa chỉ mặc định</h4>
+      <div class="text-center">
+        <a th:href="@{/account#address}" class="btn btn-primary text-white">Thêm địa chỉ mặc định</a>
+      </div>
+    </div>
+    <div id="while-cart-size-zero" th:class="${(carts == null || carts.size() == 0) ? 'd-block' : 'd-none'}">
+      <h4 class="text-center">Bạn chưa có sản phẩm nào trong giỏ hàng</h4>
+      <div class="text-center">
+        <a th:href="@{/s}" class="btn btn-primary text-white">Về trang mua hàng</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div th:if="${carts != null && carts.size() > 0}" class="bg-white container m-auto my-5 rounded py-3 while-cart-size-gr-zero">
+    <div>
+      <table class="table table-bordered table-dark" style="width: 500px; margin-left: auto">
+        <tr>
+          <th>Tổng số lượng: </th>
+          <td><span id="totalQuantity" th:text="${totalQuantity}"></span></td>
+        </tr>
+        <tr>
+          <th>Tổng giá thanh toán: </th>
+          <td><span id="totalPrice" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT') + ' đ'}"></span></td>
+        </tr>
+      </table>
+    </div>
+    <div class="card" th:if="${address != null}">
+      <div class="card-header"><h5>Chọn phương thức thanh toán</h5></div>
+      <div class="card-body">
+
+        <form method="post" class="d-flex align-items-center" th:action="@{/orders/place-order}">
+          <input onchange="activeCOD($(this))" data-check="false" type="checkbox" class="form-check-input"/> <span class="mx-1">Chọn</span>
+          <button type="submit" id="btn-cod" class="btn btn-primary btn-lg mx-2 disabled"><i class='bx bxs-truck'></i> Thanh toán khi nhận hàng</button>
+        </form>
+        <div class="my-3" id="paypal-button-container"></div>
+        <form th:action="@{/orders/process_paypal_order}" method="post" id="paypalForm">
+          <input type="hidden" name="orderId" id="orderId">
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Overlay -->
+  <div class="layout-overlay layout-menu-toggle"></div>
+</div>
+
+<!-- Footer -->
+<div th:replace="/fragments/layout-fragment :: footer"></div>
+<!-- / Footer -->
+
+<!-- / Layout wrapper -->
+<div th:replace="/fragments/layout-fragment :: scripts">
+</div>
+<script th:src="@{https://www.paypal.com/sdk/js(client-id=${clientId}, currency='USD')}"></script>
+
+<div th:if="${address != null}">
+<script>
+
+  function activeCOD(cbx) {
+    const btnCOD = $("#btn-cod");
+    if(cbx.attr('data-check') === 'false') {
+      cbx.attr('data-check', 'true')
+      btnCOD.removeClass('disabled');
+    } else {
+      cbx.attr('data-check', 'false')
+      btnCOD.addClass('disabled');
+    }
+
+
+  }
+
+  let totalPriceUSD = 0;
+  fetch(`https://v6.exchangerate-api.com/v6/06b2470b901f41bce9c40ac0/latest/VND`)
+          .then(res => res.json())
+          .then(data => {
+            const rate = data.conversion_rates['USD'];
+            let totalPriceVND = "[[${totalPrice}]]";
+            totalPriceUSD = (rate * totalPriceVND).toFixed(2);
+          })
+          .then();
+
+  paypal.Buttons({
+    enableStandardCardFields: true,
+    createOrder: function(data, actions) {
+      // setup a transaction
+      return actions.order.create({
+        intent: 'CAPTURE', // Make payment immediately
+        payer: {
+          name: {
+            give_name: "[[${customer.fullName}]]",
+            surname: ""
+          },
+          address: {
+            address_line_1: "[[${address.fullAddress}]]",
+            address_line_2: "",
+            admin_area_1: "[[${address.district.name}]]",
+            admin_area_2: "[[${address.city.name}]]",
+            country_code: "VN"
+          },
+          email_address: "[[${customer.email}]]",
+          phone: {
+            phone_type: "MOBILE",
+            phone_number: {
+              national_number: "[[${address.phoneNumber}]]"
+            }
+          }
+        },
+        purchase_units: [{
+          amount: {
+            value: totalPriceUSD,
+            currency_code: "USD"
+          }
+        }],
+
+        application_context: {
+          shipping_preference: "NO_SHIPPING"
+        }
+      });
+    },
+    onApprove: function(data, actions) {
+      // buyer approved payment
+      return actions.order.capture().then(function(details) {
+        let orderId = details.id;
+        $("#orderId").val(orderId);
+        $('#paypalForm').submit();
+      })
+    },
+    onCancel: function(data, actions) {
+
+    },
+    onError: function(data, actions) {
+      alert("error!");
+    }
+  }).render("#paypal-button-container")
+
+
+
+</script>
+</div>
+</body>
+</html>
